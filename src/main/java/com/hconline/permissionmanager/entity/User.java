@@ -2,9 +2,6 @@ package com.hconline.permissionmanager.entity;
 
 import java.util.HashSet;
 import java.util.Set;
-
-import javax.management.relation.Role;
-
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

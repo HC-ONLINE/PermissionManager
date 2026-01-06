@@ -1,6 +1,5 @@
 package com.hconline.permissionmanager.entity;
 
-import java.security.Permission;
 import java.util.HashSet;
 import java.util.Set;
 
