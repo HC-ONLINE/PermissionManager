@@ -28,11 +28,17 @@ public class UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con id: " + id));
         String currentEmail = auth.getName();
-        boolean isAdmin = hasAuthority(auth, "DELETE_USER");
-        // Ownership: el usuario puede ver su propio perfil, admin puede ver cualquiera
-        if (!isAdmin && !user.getEmail().equals(currentEmail)) {
+        // Ownership y control de acceso:
+        // 1. Puede ver su propio perfil siempre
+        // 2. Para ver perfiles ajenos, debe tener permisos privilegiados (READ_AUDIT o DELETE_USER)
+        //    Esto distingue entre USER normal (solo su perfil) vs SUPPORT/ADMIN (todos los perfiles)
+        boolean isOwnProfile = user.getEmail().equals(currentEmail);
+        boolean hasPrivilegedAccess = hasAuthority(auth, "READ_AUDIT") || hasAuthority(auth, "DELETE_USER");
+        
+        if (!isOwnProfile && !hasPrivilegedAccess) {
             throw new AccessDeniedException("No tienes permiso para ver este usuario");
         }
+        
         // Mapear a DTO con roles y permisos
         Set<String> roles = user.getRoles().stream().map(Role::getName).collect(Collectors.toSet());
         Set<String> permissions = user.getRoles().stream()

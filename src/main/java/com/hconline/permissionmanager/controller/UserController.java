@@ -31,12 +31,12 @@ public class UserController {
 
     /**
      * Actualizar información de un usuario.
-     * Requiere permiso UPDATE_USER.
-     * Un usuario puede actualizar su propio perfil, o cualquier perfil si tiene permiso UPDATE_USER como admin.
+     * Los usuarios autenticados pueden actualizar su propio perfil (email, username).
+     * Solo usuarios con permiso UPDATE_USER pueden actualizar perfiles de otros usuarios.
      * Solo admin puede cambiar roles.
      */
     @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority('UPDATE_USER')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<UserResponse> updateUser(
             @PathVariable Long id,
             @Valid @RequestBody UpdateUserRequest request,

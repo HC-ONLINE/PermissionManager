@@ -1,7 +1,6 @@
 package com.hconline.permissionmanager.security;
 
 import com.hconline.permissionmanager.entity.Permission;
-import com.hconline.permissionmanager.entity.Role;
 import com.hconline.permissionmanager.entity.User;
 import com.hconline.permissionmanager.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -9,9 +8,9 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.hconline.permissionmanager.exception.ResourceNotFoundException;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -22,9 +21,9 @@ public class CustomUserDetailsService implements UserDetailsService {
     private final UserRepository userRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String email) throws ResourceNotFoundException {
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con email: " + email));
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado con email: " + email));
 
         // Extraer permisos de los roles
         Set<GrantedAuthority> authorities = user.getRoles().stream()
