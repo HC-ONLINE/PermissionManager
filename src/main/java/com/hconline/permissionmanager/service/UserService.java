@@ -4,6 +4,7 @@ import com.hconline.permissionmanager.dto.UpdateUserRequest;
 import com.hconline.permissionmanager.dto.UserResponse;
 import com.hconline.permissionmanager.entity.Role;
 import com.hconline.permissionmanager.entity.User;
+import com.hconline.permissionmanager.exception.ResourceNotFoundException;
 import com.hconline.permissionmanager.repository.RoleRepository;
 import com.hconline.permissionmanager.repository.UserRepository;
 import jakarta.transaction.Transactional;
@@ -11,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
@@ -26,7 +26,7 @@ public class UserService {
 
     public UserResponse getUserById(Long id, Authentication auth) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado con id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con id: " + id));
         String currentEmail = auth.getName();
         boolean isAdmin = hasAuthority(auth, "DELETE_USER");
         // Ownership: el usuario puede ver su propio perfil, admin puede ver cualquiera
@@ -44,7 +44,7 @@ public class UserService {
     @Transactional
     public UserResponse updateUser(Long id, UpdateUserRequest req, Authentication auth) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado con id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con id: " + id));
         String currentEmail = auth.getName();
         boolean isAdmin = hasAuthority(auth, "UPDATE_USER");
         // Ownership: solo el usuario o admin puede actualizar
@@ -77,7 +77,7 @@ public class UserService {
     @Transactional
     public void deleteUser(Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado con id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con id: " + id));
         // Validar que no sea el último admin
         boolean isAdmin = user.getRoles().stream().anyMatch(r -> r.getName().equals("ADMIN"));
         if (isAdmin) {
