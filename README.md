@@ -126,6 +126,8 @@ Cada implementación puede ejecutarse de forma independiente desde su rama corre
 
 ```bash
 mvn spring-boot:run
+# o 
+docker compose up --build -d
 ```
 
 Para ejecutar tests:
