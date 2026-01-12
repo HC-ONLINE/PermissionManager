@@ -112,9 +112,32 @@ Estas limitaciones son **intencionales** para mantener el foco en el motor de au
 
 ## Ejecución
 
+Ejecución (local)
+
 ```bash
 mvn spring-boot:run
 ```
+
+Ejecución (Docker)
+
+* **Construir y levantar:**
+
+```bash
+docker compose up --build -d
+```
+
+> ejecutar desde la raíz del proyecto
+
+* **Login (usuario seed):**
+  * Usuario: `admin@example.com`
+  * Contraseña: `password`
+  * Petición de ejemplo:
+
+  ```bash
+  curl -X POST -H "Content-Type: application/json" -d '{"email":"admin@example.com","password":"password"}' http://localhost:8080/api/auth/login
+  ```
+
+Nota: la base de datos MySQL se ejecuta en el mismo `docker compose` y la aplicación se conecta internamente; si necesitas acceder al puerto MySQL desde el host, exporta un puerto distinto en `docker-compose.yml`.
 
 ### Requisitos
 
